@@ -31,7 +31,7 @@ def call_api(webui_server_url, api_endpoint, **payload):
         data=data,
     )
     response = urllib.request.urlopen(request)
-    print(f"Response from server for job: {data} returned with status {response.getcode()}")
+    print(f"Response from server for job returned with status {response.getcode()}")
     return json.loads(response.read().decode('utf-8'))
 
 
