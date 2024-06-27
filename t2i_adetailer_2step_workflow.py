@@ -5,27 +5,11 @@ from txt2img_utils import txt2img_adetailer_advanced
 from constants import WEBUI_SERVER_URL, OUT_DIR
 
 
-def t2i_adetailer_2step_workflow():
+def t2i_adetailer_2step_workflow(t2i_model_name, prompt, negative_prompt, face_prompt, hand_prompt):
     webui_server_url = WEBUI_SERVER_URL
     out_dir = OUT_DIR
     out_dir_t2i = os.path.join(out_dir, 'txt2img')
     os.makedirs(out_dir_t2i, exist_ok=True)
-
-    prompt = """
-    Character design, full body, 40 years old man, glass, slender, ghost, tall body, dark knight,
-    nihilistic, white skin, long white hair, blue iris, medieval fantasy, adventurer clothes, has a big sword,
-    good looking, white background, best Quality
-    """
-
-    # prompt="""Masterpiece (wide angle shot) , old sorcerer crafting an incantation, (creating a little magic city in a box:1.9),
-    # standing on an old carved table in a mage laboratory. (night ambiance:1.6), dark brooding magic look, fantastic view."""
-
-    negative_prompt = """lowres, bad anatomy, bad hands, multiple eyebrow, (cropped), extra limb, missing limbs, 
-    deformed hands, long neck, long body, (bad hands), signature, username, artist name, conjoined fingers, 
-    deformed fingers, ugly eyes, imperfect eyes, skewed eyes, unnatural face, unnatural body, error
-    """
-
-    t2i_model_name = "icbinpXL_v6"
 
     change_model(webui_server_url, t2i_model_name)
 
@@ -44,7 +28,7 @@ def t2i_adetailer_2step_workflow():
             "ad_inpaint_height": ad_inpaint_height,
             "ad_use_steps": ad_use_steps,
             "ad_steps": ad_steps,
-            "ad_prompt": prompt,
+            "ad_prompt": face_prompt,
             "ad_negative_prompt": negative_prompt,
             "ad_sampler": ad_sampler,
             "ad_tab_enable": True,
@@ -56,7 +40,7 @@ def t2i_adetailer_2step_workflow():
             "ad_inpaint_height": ad_inpaint_height,
             "ad_use_steps": ad_use_steps,
             "ad_steps": ad_steps,
-            "ad_prompt": prompt,
+            "ad_prompt": hand_prompt,
             "ad_negative_prompt": negative_prompt,
             "ad_sampler": ad_sampler,
             "ad_tab_enable": True,
@@ -82,6 +66,20 @@ def t2i_adetailer_2step_workflow():
 
 
 if __name__ == "__main__":
-    # simple_t2i_adetailer_workflow()
+    model_name = "icbinpXL_v6"
+    prompt = """
+        Character design, full body, 40 years old man, glass, slender, ghost, tall body, dark knight,
+        nihilistic, white skin, long white hair, blue iris, medieval fantasy, adventurer clothes, has a big sword,
+        good looking, white background, best Quality
+        """
+
+    # prompt="""Masterpiece (wide angle shot) , old sorcerer crafting an incantation, (creating a little magic city in a box:1.9),
+    # standing on an old carved table in a mage laboratory. (night ambiance:1.6), dark brooding magic look, fantastic view."""
+
+    negative_prompt = """lowres, bad anatomy, bad hands, multiple eyebrow, (cropped), extra limb, missing limbs, 
+        deformed hands, long neck, long body, (bad hands), signature, username, artist name, conjoined fingers, 
+        deformed fingers, ugly eyes, imperfect eyes, skewed eyes, unnatural face, unnatural body, error
+        """
+
     for i in range(3):
-        t2i_adetailer_2step_workflow()
+        t2i_adetailer_2step_workflow(model_name, prompt, negative_prompt, prompt, prompt)
