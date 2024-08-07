@@ -13,39 +13,71 @@ def t2i_adetailer_2step_workflow(t2i_model_name, prompt, negative_prompt, face_p
 
     change_model(webui_server_url, t2i_model_name)
 
-    ad_inpaint_width = 768
-    ad_inpaint_height = 768
+    ad_inpaint_width = 896
+    ad_inpaint_height = 896
     ad_use_steps = True
-    ad_steps = 32
-    ad_sampler = "DPM++ 2M Karras"
+    ad_steps = 64
 
     adetailer = [
         True,
         False,
         {
+            "ad_tab_enable": True,
             "ad_model": "face_yolov8n.pt",
+            "ad_use_inpaint_width_height": True,
             "ad_inpaint_width": ad_inpaint_width,
             "ad_inpaint_height": ad_inpaint_height,
             "ad_use_steps": ad_use_steps,
             "ad_steps": ad_steps,
             "ad_prompt": face_prompt,
             "ad_negative_prompt": negative_prompt,
-            "ad_sampler": ad_sampler,
-            "ad_tab_enable": True,
             "ad_denoising_strength": 0.4,
+            "ad_model_classes": "",
+            "ad_confidence": 0.3,
+            "ad_mask_k_largest": 0,
+            "ad_mask_min_ratio": 0.0,
+            "ad_mask_max_ratio": 1.0,
+            "ad_dilate_erode": 32,
+            "ad_x_offset": 0,
+            "ad_y_offset": 0,
+            "ad_mask_merge_invert": "None",
+            "ad_mask_blur": 6,
+            "ad_sampler": "Euler a",
+            "ad_use_sampler": False,
+            "ad_inpaint_only_masked": True,
+            "ad_inpaint_only_masked_padding": 16,
+            "ad_use_cfg_scale": False,
+            "ad_cfg_scale": 7.0,
+            "ad_use_checkpoint": False,
+            "ad_checkpoint": "Use same checkpoint",
+            "ad_use_vae": False,
+            "ad_vae": "Use same VAE",
+            "ad_use_noise_multiplier": False,
+            "ad_noise_multiplier": 1.0,
+            "ad_use_clip_skip": False,
+            "ad_clip_skip": 1,
+            "ad_restore_face": False,
+            "ad_controlnet_model": "None",
+            "ad_controlnet_module": "None",
+            "ad_controlnet_weight": 1.0,
+            "ad_controlnet_guidance_start": 0.0,
+            "ad_controlnet_guidance_end": 1.0
         },
-        {
-            "ad_model": "hand_yolov8n.pt",
-            "ad_inpaint_width": ad_inpaint_width,
-            "ad_inpaint_height": ad_inpaint_height,
-            "ad_use_steps": ad_use_steps,
-            "ad_steps": ad_steps,
-            "ad_prompt": hand_prompt,
-            "ad_negative_prompt": negative_prompt,
-            "ad_sampler": ad_sampler,
-            "ad_tab_enable": True,
-            "ad_denoising_strength": 0.4,
-        }
+        {"ad_tab_enable": False},
+        {"ad_tab_enable": False},
+        {"ad_tab_enable": False},
+        # {
+        #     "ad_model": "hand_yolov8n.pt",
+        #     "ad_inpaint_width": ad_inpaint_width,
+        #     "ad_inpaint_height": ad_inpaint_height,
+        #     "ad_use_steps": ad_use_steps,
+        #     "ad_steps": ad_steps,
+        #     "ad_prompt": hand_prompt,
+        #     "ad_negative_prompt": negative_prompt,
+        #     "ad_sampler": ad_sampler,
+        #     "ad_tab_enable": True,
+        #     "ad_denoising_strength": 0.4,
+        # }
     ]
 
     txt2img_adetailer_advanced(
@@ -56,9 +88,9 @@ def t2i_adetailer_2step_workflow(t2i_model_name, prompt, negative_prompt, face_p
         negative_prompt=negative_prompt,
         steps=50,
         width=1024,
-        height=1024,
+        height=1280,
         cfg_scale=7,
-        sampler_name="DPM++ 2M Karras",
+        sampler_name="DPM++ 2M",
         batch_count=1,
         restore_faces=False,
         enable_hr=False

@@ -17,7 +17,7 @@ def simple_t2i_adetailer_workflow():
     # good looking, white background, best Quality
     # """
 
-    prompt="""Masterpiece (wide angle shot) , old sorcerer crafting an incantation, (creating a little magic city in a box:1.9), 
+    prompt = """Masterpiece (wide angle shot) , old sorcerer crafting an incantation, (creating a little magic city in a box:1.9), 
     standing on an old carved table in a mage laboratory. (night ambiance:1.6), dark brooding magic look, fantastic view."""
 
     negative_prompt = """lowres, bad anatomy, bad hands, multiple eyebrow, (cropped), extra limb, missing limbs, 
@@ -25,7 +25,7 @@ def simple_t2i_adetailer_workflow():
     deformed fingers, ugly eyes, imperfect eyes, skewed eyes, unnatural face, unnatural body, error
     """
 
-    t2i_model_name="icbinpXL_v6"
+    t2i_model_name = "icbinpXL_v6"
 
     change_model(webui_server_url, t2i_model_name)
 
@@ -38,7 +38,7 @@ def simple_t2i_adetailer_workflow():
         width=1024,
         height=1024,
         cfg_scale=7,
-        sampler_name="DPM++ 2M Karras",
+        sampler_name="DPM++ 2M",
         batch_count=1,
         restore_faces=False,
         enable_hr=False,
@@ -47,7 +47,7 @@ def simple_t2i_adetailer_workflow():
         ad_inpaint_height=768,
         ad_use_steps=True,
         ad_steps=32,
-        ad_sampler="DPM++ 2M Karras",
+        ad_sampler="DPM++ 2M",
         ad_prompt=prompt,
         ad_negative_prompt=negative_prompt
     )

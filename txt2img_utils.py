@@ -29,10 +29,10 @@ def txt2img_basic(
 
 def txt2img_adetailer_basic(
         webui_server_url: str, out_dir_t2i: str, prompt: str, negative_prompt: str = "",
-        steps: int = 30, width: int = 512, height: int = 512, cfg_scale: int = 7, sampler_name: str = "DPM++ 2M Karras",
+        steps: int = 30, width: int = 512, height: int = 512, cfg_scale: int = 7, sampler_name: str = "DPM++ 2Ms",
         batch_count: int = 1, restore_faces: bool = False, enable_hr: bool = False, ad_model: str = "face_yolov8n.pt",
         ad_inpaint_width: int = 512, ad_inpaint_height: int = 512, ad_use_steps: bool = True, ad_steps: int = 28,
-        ad_sampler: str = "DPM++ 2M Karras", ad_prompt: str = "", ad_negative_prompt: str = ""
+        ad_sampler: str = "DPM++ 2M", ad_prompt: str = "", ad_negative_prompt: str = ""
 ):
     payload = {
         "prompt": prompt,  # extra networks also in prompts
@@ -52,15 +52,15 @@ def txt2img_adetailer_basic(
                     False,
                     {
                         "ad_model": ad_model,
+                        "ad_tab_enable": True,
+                        "ad_model_classes": "",
                         "ad_inpaint_width": ad_inpaint_width,
                         "ad_inpaint_height": ad_inpaint_height,
                         "ad_use_steps": ad_use_steps,
                         "ad_steps": ad_steps,
                         "ad_prompt": ad_prompt,
                         "ad_negative_prompt": ad_negative_prompt,
-                        "ad_tab_enable": True,
                         "ad_denoising_strength": 0.4,
-                        # "ad_model_classes": "",
                         # "ad_confidence": 0.3,
                         # "ad_mask_k_largest": 0,
                         # "ad_mask_min_ratio": 0.0,
@@ -76,7 +76,7 @@ def txt2img_adetailer_basic(
                         # "ad_use_cfg_scale": False,
                         # "ad_cfg_scale": 7.0,
                         # "ad_use_checkpoint": False,
-                        "ad_checkpoint": "Use same checkpoint",
+                        # "ad_checkpoint": "Use same checkpoint",
                         # "ad_use_vae": False,
                         # "ad_vae": "Use same VAE",
                         # "ad_use_sampler": False,
@@ -90,8 +90,12 @@ def txt2img_adetailer_basic(
                         # "ad_controlnet_weight": 1.0,
                         # "ad_controlnet_guidance_start": 0.0,
                         # "ad_controlnet_guidance_end": 1.0
+                        "ad_use_sampler": False,
                         "ad_sampler": ad_sampler
-                    }
+                    },
+                    {"ad_tab_enable": False},
+                    {"ad_tab_enable": False},
+                    {"ad_tab_enable": False},
                 ]
             }
         }
@@ -105,7 +109,7 @@ def txt2img_adetailer_basic(
 def txt2img_adetailer_advanced(
         webui_server_url: str, out_dir_t2i: str, prompt: str, adetailer: list, negative_prompt: str = "",
         steps: int = 30, width: int = 512, height: int = 512, cfg_scale: int = 7,
-        sampler_name: str = "DPM++ 2M Karras", batch_count: int = 1, restore_faces: bool = False,
+        sampler_name: str = "DPM++ 2M", batch_count: int = 1, restore_faces: bool = False,
         enable_hr: bool = False,
 ):
     # if not adetailer_objects:
@@ -132,13 +136,12 @@ def txt2img_adetailer_advanced(
             }
         }
     }
-    # print(payload)
-    print(payload["alwayson_scripts"]["ADetailer"]["args"])
+    print(payload)
+    # print(payload["alwayson_scripts"]["ADetailer"]["args"])
     # see also
     # https://github.com/Bing-su/adetailer/wiki/REST-API
     images_saved = call_txt2img_api_and_save_images(webui_server_url, out_dir_t2i, **payload)
     return images_saved
-
 
 
         # "batch_size": 1,  # always leave as 1
