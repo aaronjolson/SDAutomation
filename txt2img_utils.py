@@ -29,10 +29,10 @@ def txt2img_basic(
 
 def txt2img_adetailer_basic(
         webui_server_url: str, out_dir_t2i: str, prompt: str, negative_prompt: str = "",
-        steps: int = 30, width: int = 512, height: int = 512, cfg_scale: int = 7, sampler_name: str = "DPM++ 2Ms",
+        steps: int = 30, width: int = 512, height: int = 512, cfg_scale: int = 7, sampler_name: str = "Euler",
         batch_count: int = 1, restore_faces: bool = False, enable_hr: bool = False, ad_model: str = "face_yolov8n.pt",
         ad_inpaint_width: int = 512, ad_inpaint_height: int = 512, ad_use_steps: bool = True, ad_steps: int = 28,
-        ad_sampler: str = "DPM++ 2M", ad_prompt: str = "", ad_negative_prompt: str = ""
+        ad_sampler: str = "Euler", ad_prompt: str = "", ad_negative_prompt: str = ""
 ):
     payload = {
         "prompt": prompt,  # extra networks also in prompts
@@ -107,9 +107,20 @@ def txt2img_adetailer_basic(
 
 
 def txt2img_adetailer_advanced(
-        webui_server_url: str, out_dir_t2i: str, prompt: str, adetailer: list, negative_prompt: str = "",
-        steps: int = 30, width: int = 512, height: int = 512, cfg_scale: int = 7,
-        sampler_name: str = "DPM++ 2M", batch_count: int = 1, restore_faces: bool = False,
+        webui_server_url: str,
+        out_dir_t2i: str,
+        prompt: str,
+        adetailer: list,
+        negative_prompt: str,
+        steps: int = 30,
+        width: int = 512,
+        height: int = 512,
+        cfg_scale: float = 7,
+        distilled_cfg_scale: float = 3.5,
+        sampler_name: str = "Euler",
+        scheduler: str = "Simple",
+        batch_count: int = 1,
+        restore_faces: bool = False,
         enable_hr: bool = False,
 ):
     # if not adetailer_objects:
@@ -122,9 +133,11 @@ def txt2img_adetailer_advanced(
     payload = {
         "prompt": prompt,  # extra networks also in prompts
         "negative_prompt": negative_prompt,
+        "scheduler": scheduler,
         "steps": steps,
         "width": width,
         "height": height,
+        "distilled_cfg_scale": distilled_cfg_scale,
         "cfg_scale": cfg_scale,
         "sampler_name": sampler_name,
         "n_iter": batch_count,  # batch count

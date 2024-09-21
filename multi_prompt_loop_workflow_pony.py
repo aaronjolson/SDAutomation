@@ -1,14 +1,7 @@
-from t2i_adetailer_2step_workflow import t2i_adetailer_2step_workflow
+from t2i_adetailer_face_hand_workflow import t2i_adetailer_face_hand_workflow
 from prompt_lists import DARK_FIGURES, MAGE_WOMEN, CHARACTERS, NECROMANCERS, WARRIORS, WARRIOR_GIRL, DEMON_GIRL, BOSS_BATTLE, DARK_WIZARDS
 
-# big_prompt_list = DARK_FIGURES
-# big_prompt_list = MAGE_WOMEN
-# big_prompt_list = CHARACTERS
-# big_prompt_list = BOSS_BATTLE
-# big_prompt_list = WARRIORS
-# big_prompt_list = NECROMANCERS
-
-big_prompt_list = CHARACTERS + MAGE_WOMEN
+big_prompt_list = CHARACTERS + MAGE_WOMEN + DARK_FIGURES + WARRIORS
 
 negative_prompt = """furry, source_pony, score_6_up, score_5, score_4, NSFW, nude, naked, porn, ugly, lowres, bad anatomy, extra limb, missing limbs, deformed hands, deformed fingers, score 1, score 2, score 3"""
 
@@ -48,20 +41,12 @@ for prompt in big_prompt_list:
     # prompt_mod = f"{prefix}{prompt}{hks}{hk}{suffix}{h}"
 
     for i in range(10):
-        t2i_adetailer_2step_workflow('RedBlueFantasy_pony',
-                                     prompt_mod,
-                                     negative_prompt,
-                                     prompt_mod,
-                                     prompt_mod
-                                     )
-
-    for i in range(10):
-        t2i_adetailer_2step_workflow('prefectPonyXL_v2CleanedStyle',
-                                     prompt_mod,
-                                     negative_prompt,
-                                     prompt_mod,
-                                     prompt_mod
-                                     )
+        t2i_adetailer_face_hand_workflow('flux1_devFP8Kijai11GB',
+                                         prompt_mod,
+                                         negative_prompt,
+                                         prompt_mod,
+                                         prompt_mod
+                                         )
 
 print("Job Completed Successfully...")
 

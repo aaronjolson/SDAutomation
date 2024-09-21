@@ -5,18 +5,30 @@ from txt2img_utils import txt2img_adetailer_advanced
 from constants import WEBUI_SERVER_URL, OUT_DIR
 
 
-def t2i_adetailer_2step_workflow(t2i_model_name, prompt, negative_prompt, face_prompt, hand_prompt):
+def t2i_adetailer_face_hand_workflow(
+        t2i_model_name,
+        prompt,
+        negative_prompt,
+        face_prompt,
+        hand_prompt,
+        steps=30,
+        width=1024,
+        height=1280,
+        cfg_scale=1,
+        distilled_cfg_scale=3.5,
+        sampler_name="Euler",
+        scheduler="Simple",
+        ad_inpaint_width=1024,
+        ad_inpaint_height=1024,
+        ad_use_steps=True,
+        ad_steps=64,
+):
     webui_server_url = WEBUI_SERVER_URL
     out_dir = OUT_DIR
     out_dir_t2i = os.path.join(out_dir, 'txt2img')
     os.makedirs(out_dir_t2i, exist_ok=True)
 
     change_model(webui_server_url, t2i_model_name)
-
-    ad_inpaint_width = 896
-    ad_inpaint_height = 896
-    ad_use_steps = True
-    ad_steps = 64
 
     adetailer = [
         True,
@@ -37,12 +49,12 @@ def t2i_adetailer_2step_workflow(t2i_model_name, prompt, negative_prompt, face_p
             "ad_mask_k_largest": 0,
             "ad_mask_min_ratio": 0.0,
             "ad_mask_max_ratio": 1.0,
-            "ad_dilate_erode": 32,
+            "ad_dilate_erode": 32,  # update to 4?
             "ad_x_offset": 0,
             "ad_y_offset": 0,
             "ad_mask_merge_invert": "None",
             "ad_mask_blur": 6,
-            "ad_sampler": "Euler a",
+            "ad_sampler": "Euler",
             "ad_use_sampler": False,
             "ad_inpaint_only_masked": True,
             "ad_inpaint_only_masked_padding": 16,
@@ -67,6 +79,7 @@ def t2i_adetailer_2step_workflow(t2i_model_name, prompt, negative_prompt, face_p
         {"ad_tab_enable": False},
         {"ad_tab_enable": False},
         # {
+        #     "ad_tab_enable": True,
         #     "ad_model": "hand_yolov8n.pt",
         #     "ad_inpaint_width": ad_inpaint_width,
         #     "ad_inpaint_height": ad_inpaint_height,
@@ -86,11 +99,13 @@ def t2i_adetailer_2step_workflow(t2i_model_name, prompt, negative_prompt, face_p
         prompt,
         adetailer,
         negative_prompt=negative_prompt,
-        steps=50,
-        width=1024,
-        height=1280,
-        cfg_scale=7,
-        sampler_name="DPM++ 2M",
+        steps=steps,
+        width=width,
+        height=height,
+        cfg_scale=cfg_scale,
+        distilled_cfg_scale=distilled_cfg_scale,
+        sampler_name=sampler_name,
+        scheduler=scheduler,
         batch_count=1,
         restore_faces=False,
         enable_hr=False
@@ -114,4 +129,4 @@ if __name__ == "__main__":
         """
 
     for i in range(3):
-        t2i_adetailer_2step_workflow(model_name, prompt, negative_prompt, prompt, prompt)
+        t2i_adetailer_face_hand_workflow(model_name, prompt, negative_prompt, prompt, prompt)
