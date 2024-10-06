@@ -3,17 +3,17 @@ from prompt_lists import DARK_FIGURES, MAGE_WOMEN, CHARACTERS, NECROMANCERS, WAR
 
 big_prompt_list = CHARACTERS + MAGE_WOMEN + PRINCESS + DEMON_GIRL + WARRIORS
 
-negative_prompt = """furry, source_pony, score_6_up, score_5, score_4, NSFW, nude, naked, porn, ugly, lowres, bad anatomy, extra limb, missing limbs, deformed hands, deformed fingers, score 1, score 2, score 3"""
+negative_prompt = """furry, source_pony, score_5, score_4, NSFW, nude, naked, porn, ugly, lowres, bad anatomy, extra limb, missing limbs, deformed hands, deformed fingers, score 1, score 2, score 3"""
 
-prefix = "score_9, score_8_up, score_7_up, zPDXL, "
+prefix = "score_9, score_8_up, score_7_up, score_6_up, zPDXL, "
 suffix = "realistic, realism, highly detailed, perfect quality, high quality, photorealistic, perfect hands, perfection"
 
 
-e = '<lora:Expressive_H-000001:0.8>'
-h = '<lora:hand4:0.5>'
+e = ',<lora:Expressive_H-000001:0.8>,'
+h = ',<lora:hand4:0.6>,'
 d = ',<lora:extremely_detailed:0.8>,'
-sin = ",<lora:sinfully_stylish_SDXL>,"
-twi = ",<lora:Concept Art Twilight Style SDXL_LoRA_Pony Diffusion V6 XL:0.8>,"
+sin = ',<lora:sinfully_stylish_SDXL>,'
+twi = ',<lora:Concept Art Twilight Style SDXL_LoRA_Pony Diffusion V6 XL:0.8>,'
 fan = ',<lora:Fant5yP0ny:0.9>,'
 
 
@@ -54,11 +54,11 @@ def wrap(
 
 
 for prompt in big_prompt_list:
-    prompt_mod = f"{prompt}"
+    prompt_mod = f"{ prefix}{prompt}{suffix}{e}{sin}{h}"
 
     for i in range(10):
         wrap('cyberrealisticPony_v64',
-             prompt,
+             prompt_mod,
              negative_prompt,
              steps=40
              )
