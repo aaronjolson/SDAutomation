@@ -1,13 +1,15 @@
 from t2i_adetailer_face_hand_workflow import t2i_adetailer_face_hand_workflow
+from constants import WEBUI_SERVER_URL
 from prompt_lists import DARK_FIGURES, MAGE_WOMEN, CHARACTERS, NECROMANCERS, WARRIORS, WARRIOR_GIRL, DEMON_GIRL, BOSS_BATTLE, DARK_WIZARDS, PRINCESS
+from core import change_model
 
 big_prompt_list = CHARACTERS + MAGE_WOMEN + PRINCESS + DEMON_GIRL + WARRIORS
 
 negative_prompt = """furry, source_pony, score_5, score_4, NSFW, nude, naked, porn, ugly, lowres, bad anatomy, extra limb, missing limbs, deformed hands, deformed fingers, score 1, score 2, score 3"""
 
-prefix = "score_9, score_8_up, score_7_up, score_6_up, zPDXL, "
+prefix = "score_9, score_8_up, score_7_up, score_6_up,"
 suffix = "realistic, realism, highly detailed, perfect quality, high quality, photorealistic, perfect hands, perfection"
-
+pdz = ',zPDXL,'
 
 e = ',<lora:Expressive_H-000001:0.8>,'
 h = ',<lora:hand4:0.6>,'
@@ -52,12 +54,16 @@ def wrap(
         ad_steps=64,
         )
 
+webui_server_url = WEBUI_SERVER_URL
 
 for prompt in big_prompt_list:
-    prompt_mod = f"{ prefix}{prompt}{suffix}{e}{sin}{h}"
+    # prompt_mod = f"{ prefix}{prompt}{suffix}{e}{sin}{h}"
+    prompt_mod = f"{prefix}{prompt}{suffix}"
 
     for i in range(10):
-        wrap('cyberrealisticPony_v64',
+        t2i_model_name = 'cyberrealisticPony_v64'
+        change_model(webui_server_url, t2i_model_name)
+        wrap(t2i_model_name,
              prompt_mod,
              negative_prompt,
              steps=40

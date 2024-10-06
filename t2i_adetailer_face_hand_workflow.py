@@ -1,6 +1,5 @@
 import os
 
-from core import change_model
 from txt2img_utils import txt2img_adetailer_advanced
 from constants import WEBUI_SERVER_URL, OUT_DIR
 
@@ -27,8 +26,6 @@ def t2i_adetailer_face_hand_workflow(
     out_dir = OUT_DIR
     out_dir_t2i = os.path.join(out_dir, 'txt2img')
     os.makedirs(out_dir_t2i, exist_ok=True)
-
-    change_model(webui_server_url, t2i_model_name)
 
     adetailer = [
         True,
