@@ -1,7 +1,7 @@
 from t2i_adetailer_face_hand_workflow import t2i_adetailer_face_hand_workflow
-from prompt_lists import DARK_FIGURES, MAGE_WOMEN, CHARACTERS, NECROMANCERS, WARRIORS, WARRIOR_GIRL, DEMON_GIRL, BOSS_BATTLE, DARK_WIZARDS
+from prompt_lists import DARK_FIGURES, MAGE_WOMEN, CHARACTERS, NECROMANCERS, WARRIORS, WARRIOR_GIRL, DEMON_GIRL, BOSS_BATTLE, DARK_WIZARDS, PRINCESS
 
-big_prompt_list = CHARACTERS + MAGE_WOMEN + DARK_FIGURES + WARRIORS
+big_prompt_list = CHARACTERS + MAGE_WOMEN + PRINCESS + DEMON_GIRL + WARRIORS
 
 negative_prompt = """furry, source_pony, score_6_up, score_5, score_4, NSFW, nude, naked, porn, ugly, lowres, bad anatomy, extra limb, missing limbs, deformed hands, deformed fingers, score 1, score 2, score 3"""
 
@@ -26,27 +26,43 @@ bs = ",BOSSTYLE,"
 hk = ',<lora:HKStyle_V3-000019:0.8>,'
 hks = ',HKStyle,'
 
+
+def wrap(
+    model_name,
+    prompt,
+    negative_prompt,
+    steps=35,
+    ):
+    t2i_adetailer_face_hand_workflow(
+        model_name,
+        prompt,
+        negative_prompt,
+        prompt,
+        prompt,
+        steps=steps,
+        width=1024,
+        height=1280,
+        cfg_scale=7,
+        distilled_cfg_scale=3.5,
+        sampler_name="DPM++ SDE",
+        scheduler="Karras",
+        ad_inpaint_width=1024,
+        ad_inpaint_height=1024,
+        ad_use_steps=True,
+        ad_steps=64,
+        )
+
+
 for prompt in big_prompt_list:
-
-    # prompt_mod = f"{prefix}{prompt}{suffix}{sin}{h}{e}"
-    prompt_mod = f"{prefix}{prompt}{suffix}{twi}{sin}{h}{e}"
-
-    # prompt_mod = f"{prefix}{prompt}{fww}{hkm}{suffix}{sin}{h}{e}"
-
-    # prompt_mod = f"{prefix}{prompt}{suffix}{twi}{sin}{os}{orb}{h}{e}"
-    # prompt_mod = f"{prefix}{prompt}{os}{orb}{suffix}{fan}{sin}{h}{e}"
-    # prompt_mod = f"{prefix}{prompt}{os}{orb}{fww}{hkm}{suffix}{twi}{sin}{h}{e}"
-
-    # prompt_mod = f"{prefix}{prompt}{bs}{boss}{suffix}{h}"
-    # prompt_mod = f"{prefix}{prompt}{hks}{hk}{suffix}{h}"
+    prompt_mod = f"{prompt}"
 
     for i in range(10):
-        t2i_adetailer_face_hand_workflow('flux1_devFP8Kijai11GB',
-                                         prompt_mod,
-                                         negative_prompt,
-                                         prompt_mod,
-                                         prompt_mod
-                                         )
+        wrap('cyberrealisticPony_v64',
+             prompt,
+             negative_prompt,
+             steps=40
+             )
+
 
 print("Job Completed Successfully...")
 
