@@ -1,23 +1,36 @@
 from t2i_adetailer_face_hand_workflow import t2i_adetailer_face_hand_workflow
 from constants import WEBUI_SERVER_URL
-from prompt_lists import DARK_FIGURES, MAGE_WOMEN, CHARACTERS, NECROMANCERS, WARRIORS, WARRIOR_GIRL, DEMON_GIRL, BOSS_BATTLE, DARK_WIZARDS, PRINCESS
+from prompt_lists import DARK_FIGURES, MAGE_WOMEN, CHARACTERS, NECROMANCERS, WARRIORS, WARRIOR_GIRL, DEMON_GIRL, \
+    BOSS_BATTLE, DARK_WIZARDS, PRINCESS, CYBERPUNK, LORA_CHARACTERS, LORA_WARCRAFT, ANGEL_GIRL, FAIRY_GIRL
 from core import change_model
 
-big_prompt_list = CHARACTERS + MAGE_WOMEN + PRINCESS + DEMON_GIRL + WARRIORS
+big_prompt_list = LORA_CHARACTERS + LORA_WARCRAFT + CHARACTERS
 
-negative_prompt = """furry, source_pony, score_5, score_4, NSFW, nude, naked, porn, ugly, lowres, bad anatomy, extra limb, missing limbs, deformed hands, deformed fingers, score 1, score 2, score 3"""
+# negative_prompt = """furry, source_pony, 3D, dutch angle, censored, watermark, jpeg artifacts, muscular, ugly, lowres, bad anatomy, extra limb, missing limbs, deformed hands, deformed fingers"""
+negative_prompt = """score_6, score_5, score_4, score_1, source_anime, source_pony,  painting, illustration, 3D rendering, CG, ugly, lowres, worst quality, low quality, bad anatomy, extra limb, missing limbs, deformed hands, deformed fingers, signature, watermarks, imperfect eyes, skewed eyes, unnatural face, unnatural body, error, painting by bad-artist, cross-eyed, (lazy eye), bucktooth, censored, watermark, jpeg artifacts, muscular"""
 
-prefix = "score_9, score_8_up, score_7_up, score_6_up,"
-suffix = "realistic, realism, highly detailed, perfect quality, high quality, photorealistic, perfect hands, perfection"
+prefix = "(score_9), score_8_up, score_7_up"
+suffix = "photo realistic:1.4, realistic skin:1.4, ultra detailed, high quality, uncensored, realistic, realism"
+hand = "perfect female (hand), detailed, perfection "
 pdz = ',zPDXL,'
+pdz3 = ',zPDXL3,'
+pdzrl = ',zPDXLrl,'
 
-e = ',<lora:Expressive_H-000001:0.8>,'
-h = ',<lora:hand4:0.6>,'
-d = ',<lora:extremely_detailed:0.8>,'
-sin = ',<lora:sinfully_stylish_SDXL>,'
-twi = ',<lora:Concept Art Twilight Style SDXL_LoRA_Pony Diffusion V6 XL:0.8>,'
-fan = ',<lora:Fant5yP0ny:0.9>,'
+r = '<lora:zy_Realism_Enhancer_v1:0.4>'
+e = '<lora:Expressive_H-000001:0.6>'
+eh = 'expressiveh'
+h = '<lora:hand4:1.0>'
+ed = '<lora:extremely_detailed:0.5>'
+d = '<lora:add-detail-xl:0.4>'
+sin = '<lora:sinfully_stylish_PONY_02:0.5>'
+twi = '<lora:Concept Art Twilight Style SDXL_LoRA_Pony Diffusion V6 XL:0.6>'
+fan = '<lora:Fant5yP0ny:0.5>'
 
+prin = '<lora:princess_xl_v2:0.4>'
+
+safe = ',rating_safe,'
+questionable = ',rating_questionable,'
+explicit = ''
 
 fww = '<lora:Fantasy_Wizard__Witches_PonyV2:0.8>,'
 hkm = 'hkmagic'
@@ -33,20 +46,25 @@ def wrap(
     model_name,
     prompt,
     negative_prompt,
-    steps=35,
+    hand_prompt=None,
+    steps=40,
     ):
+
+    if not hand_prompt:
+        hand_prompt = prompt
+
     t2i_adetailer_face_hand_workflow(
         model_name,
         prompt,
         negative_prompt,
         prompt,
-        prompt,
+        hand_prompt,
         steps=steps,
         width=1024,
         height=1280,
-        cfg_scale=7,
-        distilled_cfg_scale=3.5,
-        sampler_name="DPM++ SDE",
+        cfg_scale=6,
+        distilled_cfg_scale=7,
+        sampler_name="DPM++ 2M SDE",
         scheduler="Karras",
         ad_inpaint_width=1024,
         ad_inpaint_height=1024,
@@ -55,19 +73,33 @@ def wrap(
         )
 
 webui_server_url = WEBUI_SERVER_URL
+IMAGES_PER_MODEL = 8
+
+t2i_model_name = 'magicaPonyRealism_IceMagia'
+change_model(webui_server_url, t2i_model_name)
 
 for prompt in big_prompt_list:
     # prompt_mod = f"{ prefix}{prompt}{suffix}{e}{sin}{h}"
-    prompt_mod = f"{prefix}{prompt}{suffix}"
+    # prompt_mod = f"{prefix}{prompt}{suffix}{e}{sin}"
+    # prompt_mod = f"{prefix}{prompt}{eh}{suffix}{e}{d}"
+    # prompt_mod = f"{prefix}{prompt}{eh}{suffix}{e}{d}"
+    # prompt_mod = f"{prefix}{prompt}{suffix}{prin}{r}{d}"
+    # prompt_mod = f"{prefix}{prompt}{suffix}{pdz3}{pdzrl}{r}{d}"
+    # prompt_mod = f"{prefix}{prompt},{igb},{suffix},{ig},{r},{d}"
+    # prompt_mod = f"{prefix},{prompt},{suffix},{eh},{e},{d}"
+    prompt_mod = f"{prefix},{prompt},{suffix},{d}"
+    # prompt_mod = f"{prefix}{prompt}{suffix}"
 
-    for i in range(10):
-        t2i_model_name = 'cyberrealisticPony_v64'
-        change_model(webui_server_url, t2i_model_name)
+    hand_prompt = f"{h},{hand},{suffix}"
+
+    for i in range(IMAGES_PER_MODEL):
         wrap(t2i_model_name,
              prompt_mod,
              negative_prompt,
+             hand_prompt=hand_prompt,
              steps=40
              )
+
 
 
 print("Job Completed Successfully...")

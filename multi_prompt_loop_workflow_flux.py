@@ -38,13 +38,11 @@ for prompt in big_prompt_list:
     prompt_mod = f"{prompt}"
 
     for i in range(5):
-        wrap('acornIsSpinningFLUX_v11Hyper8Step',
+        wrap('jibMixFlux_v5ItsAliveQ4GGUF',
              prompt,
              negative_prompt,
              steps=8
-        )
-
-
+             )
 
 print("Job Completed Successfully...")
 
