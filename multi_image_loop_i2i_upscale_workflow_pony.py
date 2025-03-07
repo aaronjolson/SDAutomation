@@ -65,11 +65,13 @@ def wrap(
 webui_server_url = WEBUI_SERVER_URL
 GENERATIONS_PER_IMAGE = 4
 
-t2i_model_name = 'magicaPonyRealism_IceMagia'
+# ponyRealism_v22MainVAE
+# magicaPonyRealism_FireMagica_2d
+# cyberrealisticPony_v70a
+t2i_model_name = 'ponyRealism_v22MainVAE'
 change_model(webui_server_url, t2i_model_name)
 
-# directory_path = "E:\\Stable_diffusion_projects\\Inspiration\\Ice_Magica\\upscale"
-directory_path ="E:\\Stable_diffusion_projects\\Inspiration"
+directory_path = "M:\\Stable_diffusion_projects\\Inspiration"
 
 images_list = get_image_files(directory_path)
 
@@ -100,8 +102,8 @@ for image in images_list:
              hand_prompt=hand_prompt,
              source_image=images,
              steps=40,
-             width=width*1.5,
-             height=height*1.5
+             width=width*1.25,
+             height=height*1.25
              )
 
 
