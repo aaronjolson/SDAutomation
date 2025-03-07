@@ -8,7 +8,10 @@ def convert_path(unix_path):
 def get_metadata_exiftool(image_path):
     """Extracts metadata from an image using exiftool."""
     try:
+        # breakpoint()
         result = subprocess.run(["exiftool", image_path], stdout=subprocess.PIPE, text=True)
+        print(result)
+        # breakpoint()
         return result.stdout
     except Exception as e:
         print(f"Error running exiftool: {e}")
@@ -84,7 +87,10 @@ def parse_parameters_string(param_string):
     params = {}
 
     # First, let's handle the main prompt and negative prompt
-    parts = param_string.split("Negative prompt:", 1)
+    if "Negative prompt:" in param_string:
+        parts = param_string.split("Negative prompt:", 1)
+    else:
+        parts = param_string.split("Sampler:", 1)
     params["prompt"] = parts[0].strip()
 
     # Split the rest by comma and handle each parameter
