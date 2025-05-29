@@ -9,10 +9,15 @@ def get_metadata_exiftool(image_path):
     """Extracts metadata from an image using exiftool."""
     try:
         # breakpoint()
-        result = subprocess.run(["exiftool", image_path], stdout=subprocess.PIPE, text=True)
-        print(result)
+        # result = subprocess.run(["exiftool", image_path], stdout=subprocess.PIPE, text=True)
+        # Get binary output instead of text
+        result = subprocess.run(["exiftool", image_path], stdout=subprocess.PIPE, text=False)
+
+        # print(result)
         # breakpoint()
-        return result.stdout
+
+        # Decode the output with error handling
+        return result.stdout.decode('utf-8', errors='replace')
     except Exception as e:
         print(f"Error running exiftool: {e}")
         return None
@@ -153,7 +158,7 @@ def parse_parameters_string(param_string):
 def get_image_parameters(image_path: str) -> dict:
     metadata = get_metadata_exiftool(image_path)
     if metadata:
-        # print(metadata)
+        print(metadata)
         output = convert_forge_metadata_to_dict(metadata)
         print(json.dumps(output, indent=2))
         has_params = output.get("Parameters")
