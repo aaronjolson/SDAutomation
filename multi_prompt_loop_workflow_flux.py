@@ -1,10 +1,12 @@
 import os
 import sys
 import jsonlines
+
 from core import change_model
 from constants import WEBUI_SERVER_URL
 from multi_image_loop_i2i_upscale_workflow_fix_hands_only_flux import t2i_model_name
 from t2i_adetailer_face_hand_workflow import t2i_adetailer_face_hand_workflow
+from utils import save_progress, load_progress, clear_progress
 
 # 1. Get the absolute path of the current script (main.py)
 current_script_path = os.path.abspath(__file__)
@@ -26,6 +28,9 @@ else:
     print(f"Already in sys.path: {path_to_prompt_utils_project}")
 from get_prompts import get_prompts
 from flux_prompt_utils import modify_prompt, get_negative_prompt, get_hand_prompt
+
+# Progress tracking functions
+PROGRESS_FILE = "flux_workflow_progress.json"
 
 big_prompt_list = get_prompts()
 
@@ -85,53 +90,98 @@ IMAGES_PER_MODEL = 6
 #     for obj in reader:
 #         big_prompt_list.append(obj['prompt'])
 
-for prompt in big_prompt_list:
+# Load previous progress if available
+previous_progress = load_progress(PROGRESS_FILE)
+start_index = 0
 
-    # for i in range(IMAGES_PER_MODEL):
-        # prompt_mod = randomify(f"{prompt},{suffix_art}", lora_list)
-        # wrap('',
-        #      prompt_mod,
-        #      face_prompt=face_prompt,
-        #      hand_prompt=hand_prompt,
-        #      steps=40
-        #      )
-    for i in range(IMAGES_PER_MODEL):
-        change_model(webui_server_url, "fluxKreaFp8_v10")
-        prompt_mod = modify_prompt(prompt)
-        wrap('',
-             prompt_mod,
-             face_prompt=prompt,
-             hand_prompt=get_hand_prompt(),
-             steps=40
-             )
-    for i in range(IMAGES_PER_MODEL):
-        change_model(webui_server_url, "colossusProjectFlux_v90AIO")
-        prompt_mod = modify_prompt(prompt)
-        wrap('',
-             prompt_mod,
-             face_prompt=prompt,
-             hand_prompt=get_hand_prompt(),
-             steps=40
-             )
-    for i in range(IMAGES_PER_MODEL):
-        change_model(webui_server_url, "jibMixFlux_v72PixelHeaven")
-        prompt_mod = modify_prompt(prompt)
-        wrap('',
-             prompt_mod,
-             face_prompt=prompt,
-             hand_prompt=get_hand_prompt(),
-             steps=40
-             )
-    for i in range(IMAGES_PER_MODEL):
-        change_model(webui_server_url, "cyberrealisticFlux_v10FP8")
-        prompt_mod = modify_prompt(prompt)
-        wrap('',
-             prompt_mod,
-             face_prompt=prompt,
-             hand_prompt=get_hand_prompt(),
-             steps=40
-             )
+if previous_progress:
+    response = input(
+        f"Resume from prompt {previous_progress['current_prompt_index'] + 1}/{previous_progress['total_prompts']}? (y/n): ").strip().lower()
+    if response == 'y':
+        start_index = previous_progress['current_prompt_index']
+        print(f"Resuming from prompt {start_index + 1}")
+    else:
+        print("Starting from the beginning")
 
-    # change_model(webui_server_url, 'magicaPonyRealism_WhiteMagica')
+total_prompts = len(big_prompt_list)
+print(f"Processing {total_prompts} prompts starting from index {start_index}")
+
+try:
+    for prompt_index, prompt in enumerate(big_prompt_list[start_index:], start=start_index):
+        print(f"\n=== Processing prompt {prompt_index + 1}/{total_prompts} ===")
+        print(f"Prompt: {prompt[:100]}...")  # Show first 100 chars of prompt
+
+        # Save progress at the start of each prompt
+        # save_progress(PROGRESS_FILE, prompt_index, total_prompts, prompt)
+
+        # prompt_mod = modify_prompt(prompt)
+        negative_prompt = get_negative_prompt()
+        hand_prompt = get_hand_prompt()
+
+        # save_progress(PROGRESS_FILE, prompt_index, total_prompts, prompt, t2i_model_name)
+
+        # for i in range(IMAGES_PER_MODEL):
+            # prompt_mod = randomify(f"{prompt},{suffix_art}", lora_list)
+            # wrap('',
+            #      prompt_mod,
+            #      face_prompt=face_prompt,
+            #      hand_prompt=hand_prompt,
+            #      steps=40
+            #      )
+
+        save_progress(PROGRESS_FILE, prompt_index, total_prompts, prompt, "fluxKreaFp8_v10")
+        for i in range(IMAGES_PER_MODEL):
+            change_model(webui_server_url, "fluxKreaFp8_v10")
+            prompt_mod = modify_prompt(prompt)
+            wrap('',
+                 prompt_mod,
+                 face_prompt=prompt,
+                 hand_prompt=get_hand_prompt(),
+                 steps=40
+                 )
+        save_progress(PROGRESS_FILE, prompt_index, total_prompts, prompt, "colossusProjectFlux_v90AIO")
+        for i in range(IMAGES_PER_MODEL):
+            change_model(webui_server_url, "colossusProjectFlux_v90AIO")
+            prompt_mod = modify_prompt(prompt)
+            wrap('',
+                 prompt_mod,
+                 face_prompt=prompt,
+                 hand_prompt=get_hand_prompt(),
+                 steps=40
+                 )
+        save_progress(PROGRESS_FILE, prompt_index, total_prompts, prompt, "jibMixFlux_v72PixelHeaven")
+        for i in range(IMAGES_PER_MODEL):
+            change_model(webui_server_url, "jibMixFlux_v72PixelHeaven")
+            prompt_mod = modify_prompt(prompt)
+            wrap('',
+                 prompt_mod,
+                 face_prompt=prompt,
+                 hand_prompt=get_hand_prompt(),
+                 steps=40
+                 )
+        save_progress(PROGRESS_FILE, prompt_index, total_prompts, prompt, "cyberrealisticFlux_v10FP8")
+        for i in range(IMAGES_PER_MODEL):
+            change_model(webui_server_url, "cyberrealisticFlux_v10FP8")
+            prompt_mod = modify_prompt(prompt)
+            wrap('',
+                 prompt_mod,
+                 face_prompt=prompt,
+                 hand_prompt=get_hand_prompt(),
+                 steps=40
+            )
+
+        print(f"Completed prompt {prompt_index + 1}/{total_prompts}")
+
+except KeyboardInterrupt:
+    print("\nProcess interrupted by user. Progress has been saved.")
+    print(f"Resume from prompt {prompt_index + 1} next time.")
+except Exception as e:
+    print(f"\nError occurred: {e}")
+    print(f"Progress saved. Resume from prompt {prompt_index + 1} next time.")
+    raise
+
+# Clear progress file when completely done
+clear_progress(PROGRESS_FILE)
+
 
 print("Job Completed Successfully...")
