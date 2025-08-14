@@ -107,6 +107,10 @@ try:
         # Save progress at the start of each prompt
         # save_progress(PROGRESS_FILE,prompt_index, total_prompts, prompt)
 
+        prompt_mod = modify_prompt(prompt)
+        negative_prompt = get_negative_prompt()
+        hand_prompt = get_hand_prompt()
+
         # for i in range(IMAGES_PER_MODEL):
         #     wrap(t2i_model_name,
         #          prompt_mod,
@@ -117,12 +121,12 @@ try:
         #          )
 
         save_progress(PROGRESS_FILE, prompt_index, total_prompts, prompt, t2i_model_name)
-        change_model(webui_server_url, 'illustriousMagica_GreenMagica')
+        change_model(webui_server_url, 'illustriousMagica_RoyalBlueMagica')
         for i in range(IMAGES_PER_MODEL):
             wrap('',
                  prompt_mod,
                  # negative_prompt,
-                 negative_prompt_anime,
+                 negative_prompt,
                  hand_prompt=hand_prompt,
                  steps=40
             )
